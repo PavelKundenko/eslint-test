@@ -14,7 +14,7 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'simple-import-sort'],
   rules: {
     // Regular Rules
     'import/prefer-default-export': 'off',
@@ -70,4 +70,44 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    // override "simple-import-sort" config
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // Packages `react` related packages come first.
+              ["^react", "^\\w", "^@\\w"],
+              // Internal packages.
+              [
+                "^@(/.*|$)",
+                "^@app(/.*|$)",
+                "^@utils(/.*|$)",
+                "^@store(/.*|$)",
+                "^@routes(/.*|$)",
+                "^@styles(/.*|$)",
+                "^@images(/.*|$)",
+                "^@shared(/.*|$)",
+                "^@queries(/.*|$)",
+                "^@typings(/.*|$)",
+                "^@modules(/.*|$)",
+                "^@components(/.*|$)"
+              ],
+              // Side effect imports.
+              ["^\\u0000"],
+              // Parent imports. Put `..` last.
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              // Style imports.
+              ["^.+\\.?(css)$"]
+            ]
+          }
+        ]
+      }
+    }
+  ],
 }
